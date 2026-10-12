@@ -1,9 +1,41 @@
 
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import Sidebar from "./Sidebar";
 
 export default function Layout() {
+  const navigate = useNavigate();
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#4f46e5",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      navigate("/login", { replace: true });
+
+      Swal.fire({
+        title: "Logged Out!",
+        text: "You have been logged out successfully.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-slate-50">
@@ -20,8 +52,18 @@ export default function Layout() {
             Task Management
           </span>
 
-          <div className="ml-auto truncate pl-3 text-sm text-slate-500">
-            Welcome, {user.name || "User"}
+          <div className="ml-auto flex items-center gap-3 pl-3">
+            <span className="truncate text-sm text-slate-500">
+              Welcome, {user.name || "User"}
+            </span>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="shrink-0 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+            >
+              Logout
+            </button>
           </div>
         </header>
 

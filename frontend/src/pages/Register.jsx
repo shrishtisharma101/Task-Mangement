@@ -31,18 +31,20 @@ export default function Register() {
 
     setLoading(true);
 
-    try {
-      const { data } = await api.post("/auth/register", form);
+    
+try {
+  await api.post("/auth/register", form);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
+  navigate("/login", { replace: true });
+} catch (err) {
+  setError(err.response?.data?.message || "Registration failed");
+} finally {
+  setLoading(false);
+}
+
   };
 
   return (
