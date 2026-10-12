@@ -1,5 +1,6 @@
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import {
   LayoutDashboard,
   ListTodo,
@@ -48,6 +49,8 @@ const menuGroups = [
 ];
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${
       isActive
@@ -55,15 +58,37 @@ export default function Sidebar() {
         : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-700"
     }`;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/login";
+  const logout = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to log out of your account?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#4f46e5",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, Logout",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      navigate("/login", { replace: true });
+
+      Swal.fire({
+        title: "Logged Out!",
+        text: "You have been logged out successfully.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
   };
 
   return (
     <aside className="flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
-
       {/* Fixed Logo */}
       <div className="shrink-0 px-4 pb-5 pt-5">
         <div className="flex items-center gap-3 px-2">

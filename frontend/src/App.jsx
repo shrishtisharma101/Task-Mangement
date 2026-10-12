@@ -38,8 +38,8 @@ export default function App() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
@@ -57,19 +57,10 @@ export default function App() {
         </Route>
       </Route>
 
-      {/* Default Redirect */}
+      {/* Open Register Page When Website Link Is Opened */}
       <Route
         path="/"
-        element={
-          <Navigate
-            to={
-              localStorage.getItem("token")
-                ? "/dashboard"
-                : "/login"
-            }
-            replace
-          />
-        }
+        element={<Navigate to="/register" replace />}
       />
 
       {/* Unknown Route Redirect */}
