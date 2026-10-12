@@ -33,6 +33,7 @@ exports.register = async (req, res) => {
     });
 
     if (existingUser) {
+      console.info("Registration rejected: matching email exists in connected database");
       return res.status(409).json({
         message: "Email is already registered",
       });
@@ -58,10 +59,22 @@ exports.register = async (req, res) => {
       },
     });
   } catch (error) {
-    if (error.code === 11000) {
+    // Only report an email conflict when MongoDB identifies the email index.
+    // Other duplicate-key errors can come from stale or unexpected indexes.
+    if (error.code === 11000 && error.keyPattern?.email) {
+      console.info("Registration rejected: MongoDB email unique index conflict");
       return res.status(409).json({
         message: "Email is already registered",
       });
+    }
+
+    if (error.code === 11000) {
+      console.error("Registration failed due to a non-email unique index:", {
+        keyPattern: error.keyPattern,
+        index: error.index,
+      });
+    } else {
+      console.error("Registration failed:", error.message);
     }
 
     res.status(500).json({ message: "Registration failed" });
