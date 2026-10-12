@@ -6,8 +6,7 @@ import {
   Outlet,
 } from "react-router-dom";
 
-// Layout Component
-import Layout from "./components/layout";
+import Layout from "./components/Layout";
 
 // Existing Pages
 import Login from "./pages/Login";
